@@ -1,0 +1,275 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { nanoid } from 'nanoid'
+import { supabase } from '../lib/supabase'
+import type { ValentineTarget } from '../types'
+
+type Step = 1 | 2 | 3 | 4
+
+const MAX_FILE_SIZE_MB = 2
+const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024
+
+export default function Create() {
+  const [step, setStep] = useState<Step>(1)
+  const [target, setTarget] = useState<ValentineTarget>('for_her')
+  const [photo1, setPhoto1] = useState<File | null>(null)
+  const [photo2, setPhoto2] = useState<File | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [generatedId, setGeneratedId] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const photo1Preview = photo1 ? URL.createObjectURL(photo1) : null
+  const photo2Preview = photo2 ? URL.createObjectURL(photo2) : null
+
+  const handlePhotoChange = (
+    setter: (f: File | null) => void,
+    file: File | undefined,
+    input: HTMLInputElement | null
+  ) => {
+    setUploadError(null)
+    if (!file) {
+      setter(null)
+      return
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadError(`Файл не должен превышать ${MAX_FILE_SIZE_MB} МБ`)
+      setter(null)
+      if (input) input.value = ''
+      return
+    }
+    setter(file)
+  }
+
+  const handleCreate = async () => {
+    if (!photo1 || !photo2) return
+    setLoading(true)
+    setError(null)
+
+    try {
+      const id = nanoid(10)
+
+      if (!supabase) {
+        setError('Supabase не настроен. Добавь VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY в .env')
+        setLoading(false)
+        return
+      }
+
+      const ext1 = photo1.name.split('.').pop() || 'jpg'
+      const ext2 = photo2.name.split('.').pop() || 'jpg'
+      const path1 = `${id}/photo1.${ext1}`
+      const path2 = `${id}/photo2.${ext2}`
+
+      const { error: upload1Error } = await supabase.storage
+        .from('photos')
+        .upload(path1, photo1, { upsert: true })
+
+      if (upload1Error) throw upload1Error
+
+      const { error: upload2Error } = await supabase.storage
+        .from('photos')
+        .upload(path2, photo2, { upsert: true })
+
+      if (upload2Error) throw upload2Error
+
+      const { error: insertError } = await supabase.from('valentines').insert({
+        id,
+        target,
+        photo1_path: path1,
+        photo2_path: path2,
+      })
+
+      if (insertError) throw insertError
+
+      setGeneratedId(id)
+      setStep(4)
+    } catch (err: unknown) {
+      const msg = typeof err === 'object' && err !== null && 'message' in err
+        ? String((err as { message: string }).message)
+        : 'Проверь настройки Supabase'
+      setError(`Не удалось создать валентинку. ${msg}`)
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const shareUrl = generatedId && typeof window !== 'undefined'
+    ? `${window.location.origin}/v/${generatedId}`
+    : ''
+
+  const telegramShareUrl = shareUrl
+    ? `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('Мне прислали валентинку 😍 Попробуй и ты!')}`
+    : ''
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-valentine-50 via-cream-50 to-valentine-100">
+      <header className="p-4 border-b border-valentine-200/50">
+        <Link to="/" className="text-valentine-700 hover:text-valentine-900 font-medium">
+          ← На главную
+        </Link>
+      </header>
+
+      <main className="max-w-xl mx-auto p-6 py-12">
+        {step === 1 && (
+          <div className="space-y-6">
+            <h1 className="font-display text-2xl font-bold text-valentine-900">
+              Для кого валентинка?
+            </h1>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => { setTarget('for_her'); setStep(2) }}
+                className="p-6 rounded-2xl border-2 border-valentine-200 bg-white hover:border-valentine-400 hover:bg-valentine-50 transition-colors text-left"
+              >
+                <span className="text-3xl block mb-2">👩</span>
+                <span className="font-semibold text-valentine-800">Для девушки</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setTarget('for_him'); setStep(2) }}
+                className="p-6 rounded-2xl border-2 border-valentine-200 bg-white hover:border-valentine-400 hover:bg-valentine-50 transition-colors text-left"
+              >
+                <span className="text-3xl block mb-2">👨</span>
+                <span className="font-semibold text-valentine-800">Для парня</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-6">
+            <h1 className="font-display text-2xl font-bold text-valentine-900">
+              Загрузи 2 фото
+            </h1>
+            <p className="text-sm text-gray-500">Макс. {MAX_FILE_SIZE_MB} МБ на фото</p>
+            {uploadError && (
+              <p className="text-red-600 text-sm">{uploadError}</p>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <label className="aspect-[3/4] rounded-2xl border-2 border-dashed border-valentine-300 flex items-center justify-center cursor-pointer hover:border-valentine-500 hover:bg-valentine-50/50 transition-colors overflow-hidden">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const input = e.target
+                    handlePhotoChange(setPhoto1, input.files?.[0], input)
+                  }}
+                />
+                {photo1Preview ? (
+                  <img src={photo1Preview} alt="Фото 1" className="w-full h-full object-cover rounded-2xl" />
+                ) : (
+                  <span className="text-valentine-500 text-4xl">📷</span>
+                )}
+              </label>
+              <label className="aspect-[3/4] rounded-2xl border-2 border-dashed border-valentine-300 flex items-center justify-center cursor-pointer hover:border-valentine-500 hover:bg-valentine-50/50 transition-colors overflow-hidden">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const input = e.target
+                    handlePhotoChange(setPhoto2, input.files?.[0], input)
+                  }}
+                />
+                {photo2Preview ? (
+                  <img src={photo2Preview} alt="Фото 2" className="w-full h-full object-cover rounded-2xl" />
+                ) : (
+                  <span className="text-valentine-500 text-4xl">📷</span>
+                )}
+              </label>
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="px-4 py-2 text-valentine-600 hover:text-valentine-800"
+              >
+                Назад
+              </button>
+              <button
+                type="button"
+                onClick={() => photo1 && photo2 && setStep(3)}
+                disabled={!photo1 || !photo2}
+                className="flex-1 py-3 rounded-xl bg-valentine-500 text-white font-semibold disabled:opacity-50"
+              >
+                Дальше
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-6">
+            <h1 className="font-display text-2xl font-bold text-valentine-900">
+              Всё верно?
+            </h1>
+            <div className="grid grid-cols-2 gap-4">
+              {photo1Preview && (
+                <img src={photo1Preview} alt="Фото 1" className="aspect-[3/4] object-cover rounded-2xl border-2 border-valentine-200" />
+              )}
+              {photo2Preview && (
+                <img src={photo2Preview} alt="Фото 2" className="aspect-[3/4] object-cover rounded-2xl border-2 border-valentine-200" />
+              )}
+            </div>
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="px-4 py-2 text-valentine-600 hover:text-valentine-800"
+              >
+                Назад
+              </button>
+              <button
+                type="button"
+                onClick={handleCreate}
+                disabled={loading}
+                className="flex-1 py-3 rounded-xl bg-valentine-500 text-white font-semibold disabled:opacity-50"
+              >
+                {loading ? 'Создаю...' : 'Создать ссылку'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && generatedId && (
+          <div className="space-y-6 text-center">
+            <p className="text-4xl">🎉</p>
+            <h1 className="font-display text-2xl font-bold text-valentine-900">
+              Готово!
+            </h1>
+            <p className="text-gray-600">
+              Отправь эту ссылку своей второй половинке:
+            </p>
+            <div className="p-4 rounded-xl bg-white border border-valentine-200 break-all text-valentine-700 font-mono text-sm">
+              {shareUrl}
+            </div>
+            <a
+              href={telegramShareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0088cc] text-white font-semibold"
+            >
+              Поделиться в Telegram
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                setStep(1)
+                setPhoto1(null)
+                setPhoto2(null)
+                setGeneratedId(null)
+                setError(null)
+              }}
+              className="block w-full py-2 text-valentine-600 hover:text-valentine-800"
+            >
+              Создать ещё одну
+            </button>
+          </div>
+        )}
+      </main>
+    </div>
+  )
+}
