@@ -28,6 +28,28 @@ npm run dev
 
 Загрузи видео в YouTube Shorts. ID берётся из URL: `youtube.com/shorts/VIDEO_ID`
 
+## Демо-фото
+
+На странице `/demo` используются фото по умолчанию. Чтобы поставить свои:
+
+**Вариант 1 (локальные файлы):** положи `demo-photo1.jpg` и `demo-photo2.jpg` в папку `public/`, добавь в `.env`:
+```
+VITE_DEMO_PHOTO_1=/demo-photo1.jpg
+VITE_DEMO_PHOTO_2=/demo-photo2.jpg
+```
+
+**Вариант 2 (URL):** укажи полные ссылки на изображения в `.env`.
+
+В Vercel те же переменные добавляй в **Settings → Environment Variables**.
+
+## Как вносить изменения и деплоить
+
+1. Редактируй код локально
+2. `git add .`
+3. `git commit -m "Описание изменений"`
+4. `git push`
+5. Vercel автоматически задеплоит новую версию (1–2 минуты)
+
 ## Деплой на Vercel
 
 1. Push в GitHub

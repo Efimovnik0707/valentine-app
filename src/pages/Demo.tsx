@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import ValentineFlow from '../components/ValentineFlow'
 
-const DEMO_PHOTO_1 = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=533&fit=crop'
-const DEMO_PHOTO_2 = 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=533&fit=crop'
+// Свои фото: VITE_DEMO_PHOTO_1 и VITE_DEMO_PHOTO_2 в .env (или в Vercel)
+// Пример: положи фото в public/ и укажи VITE_DEMO_PHOTO_1=/demo-photo1.jpg
+const DEMO_PHOTO_1 = import.meta.env.VITE_DEMO_PHOTO_1 || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=533&fit=crop'
+const DEMO_PHOTO_2 = import.meta.env.VITE_DEMO_PHOTO_2 || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=533&fit=crop'
 
 export default function Demo() {
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/demo` : ''
