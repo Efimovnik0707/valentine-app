@@ -18,6 +18,7 @@ export default function Create() {
   const [generatedId, setGeneratedId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const photo1Preview = photo1 ? URL.createObjectURL(photo1) : null
   const photo2Preview = photo2 ? URL.createObjectURL(photo2) : null
@@ -99,8 +100,17 @@ export default function Create() {
     : ''
 
   const telegramShareUrl = shareUrl
-    ? `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('Мне прислали валентинку 😍 Попробуй и ты!')}`
+    ? `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('Вот моя валентинка для тебя 💕')}`
     : ''
+
+  const handleCopyLink = async () => {
+    if (!shareUrl) return
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {}
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-valentine-50 via-cream-50 to-valentine-100">
@@ -243,8 +253,20 @@ export default function Create() {
             <p className="text-gray-600">
               Отправь эту ссылку своей второй половинке:
             </p>
-            <div className="p-4 rounded-xl bg-white border border-valentine-200 break-all text-valentine-700 font-mono text-sm">
-              {shareUrl}
+            <div className="flex items-center gap-2 p-4 rounded-xl bg-white border border-valentine-200">
+              <span className="flex-1 break-all text-valentine-700 font-mono text-sm min-w-0">{shareUrl}</span>
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="shrink-0 p-2 rounded-lg bg-valentine-100 hover:bg-valentine-200 text-valentine-700 transition-colors"
+                title="Скопировать"
+              >
+                {copied ? '✓' : (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                )}
+              </button>
             </div>
             <a
               href={telegramShareUrl}

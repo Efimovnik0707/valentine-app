@@ -10,7 +10,7 @@ interface ShareButtonsProps {
 export default function ShareButtons({ shareUrl }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false)
 
-  const shareText = 'Мне прислали валентинку 😍 Попробуй и ты!'
+  const shareText = 'Вот моя валентинка для тебя 💕'
   const telegramUrl = `${TELEGRAM_SHARE_BASE}url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`
 
   const handleCopy = async () => {
@@ -25,7 +25,28 @@ export default function ShareButtons({ shareUrl }: ShareButtonsProps) {
 
   return (
     <div className="space-y-3">
-      <p className="text-white/90 font-medium">Поделись, как тебя спросили!</p>
+      <p className="text-white/90 font-medium">Поделись ссылкой на свою валентинку:</p>
+      <div className="flex items-center justify-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 max-w-full bg-white/20 rounded-xl px-3 py-2 border border-white/30">
+          <span className="text-white font-mono text-sm truncate flex-1 min-w-0">{shareUrl}</span>
+          <motion.button
+            type="button"
+            onClick={handleCopy}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className="shrink-0 p-2 rounded-lg bg-white/30 hover:bg-white/40 transition-colors"
+            title="Скопировать"
+          >
+            {copied ? (
+              <span className="text-white text-lg">✓</span>
+            ) : (
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            )}
+          </motion.button>
+        </div>
+      </div>
       <div className="flex flex-wrap gap-3 justify-center">
         <motion.a
           href={telegramUrl}
@@ -40,15 +61,6 @@ export default function ShareButtons({ shareUrl }: ShareButtonsProps) {
           </svg>
           Поделиться в Telegram
         </motion.a>
-        <motion.button
-          type="button"
-          onClick={handleCopy}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/20 text-white font-medium border border-white/30"
-        >
-          {copied ? '✓ Скопировано' : 'Копировать ссылку'}
-        </motion.button>
         <motion.a
           href="/create"
           whileHover={{ scale: 1.05 }}
