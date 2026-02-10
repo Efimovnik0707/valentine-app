@@ -1,0 +1,91 @@
+{
+  "common": {
+    "logo": "Valentine",
+    "back": "Back",
+    "backToHome": "← Back to home",
+    "copy": "Copy",
+    "next": "Next"
+  },
+  "landing": {
+    "title": "Create your Valentine",
+    "subtitle": "Send a link to your loved one — let the \"No\" button run away, and \"Yes\" will reveal your photos and message.",
+    "createCta": "Create Valentine",
+    "demoCta": "Show example",
+    "howItWorks": "How it works",
+    "videoTitle": "See it in action",
+    "footer": "Made by AI studio —",
+    "footerStorage": "Photos and links are stored for up to 10 days"
+  },
+  "howItWorks": {
+    "step1Title": "Choose and upload",
+    "step1Desc": "Choose \"for him\" or \"for her\", upload 2 photos — they'll appear at the end.",
+    "step2Title": "Get the link",
+    "step2Desc": "Copy the link and send it to your loved one via Telegram, WhatsApp or any messenger.",
+    "step3Title": "They open it",
+    "step3Desc": "They'll see \"Will you be my Valentine?\", a \"No\" button (that runs away!), and \"Yes\" reveals your photos and message."
+  },
+  "create": {
+    "forWhom": "Who is this Valentine for?",
+    "forHer": "For her",
+    "forHim": "For him",
+    "uploadPhotos": "Upload 2 photos",
+    "maxSize": "Max {{mb}} MB per photo",
+    "uploadError": "File must not exceed {{mb}} MB",
+    "allCorrect": "All good?",
+    "photo1": "Photo 1",
+    "photo2": "Photo 2",
+    "createLink": "Create link",
+    "creating": "Creating...",
+    "done": "Done!",
+    "sendLink": "Send this link to your loved one:",
+    "shareTelegram": "Telegram",
+    "shareWhatsApp": "WhatsApp",
+    "createAnother": "Create another",
+    "supabaseError": "Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env",
+    "createError": "Failed to create Valentine. {{msg}}",
+    "checkSupabase": "Check Supabase settings"
+  },
+  "share": {
+    "creatorText": "Here's my Valentine for you 💕",
+    "recipientText": "Check out this Valentine I got 💕",
+    "creatorPrompt": "Share the link to your Valentine:",
+    "recipientPrompt": "Share your Valentine:",
+    "shareLabel": "Share the link to your Valentine",
+    "createOwn": "Create your own"
+  },
+  "valentine": {
+    "loading": "Loading...",
+    "invalidLink": "Invalid link",
+    "notFound": "Valentine not found",
+    "loadError": "Failed to load Valentine",
+    "somethingWrong": "Something went wrong",
+    "backToHome": "Back to home"
+  },
+  "intro": {
+    "forHerTitle": "For the best girl",
+    "forHerQuestion": "Will you be my Valentine?",
+    "forHimTitle": "For the best guy",
+    "forHimQuestion": "Will you be my Valentine?",
+    "yes": "Yes! ❤️",
+    "no": "No"
+  },
+  "noReaction": {
+    "seriously": "Are you serious???"
+  },
+  "tease": {
+    "haha": "HAHAHAHA!!!",
+    "easy": "So easy to trick!",
+    "think": "Did you think I'd let you have that?!",
+    "okay": "Okay, okay..."
+  },
+  "success": {
+    "forHer": "Yay! I'm so happy!",
+    "forHim": "Yay! I'm so happy!"
+  },
+  "yesworkflow": {
+    "text": "Want a unique holiday gift or business automation?",
+    "brand": "We're YesWorkflow AI studio.",
+    "cta": "Get in touch →",
+    "telegram": "Message on Telegram"
+  }
+}

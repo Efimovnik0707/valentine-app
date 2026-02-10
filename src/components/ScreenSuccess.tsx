@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import YesWorkflowBlock from './YesWorkflowBlock'
 import ShareButtons from './ShareButtons'
 import type { ValentineTarget } from '../types'
@@ -10,18 +11,14 @@ interface ScreenSuccessProps {
   shareUrl: string
 }
 
-const LABELS = {
-  for_her: 'Ура! Я так счастлив!', // для девушки = говорит парень
-  for_him: 'Ура! Я так счастлива!', // для парня = говорит девушка
-}
-
 export default function ScreenSuccess({
   target,
   photo1Url,
   photo2Url,
   shareUrl,
 }: ScreenSuccessProps) {
-  const message = LABELS[target]
+  const { t } = useTranslation()
+  const message = target === 'for_her' ? t('success.forHer') : t('success.forHim')
 
   return (
     <motion.div
@@ -44,7 +41,7 @@ export default function ScreenSuccess({
         >
           <img
             src={photo1Url}
-            alt="Фото 1"
+            alt={t('create.photo1')}
             className="w-full h-full object-cover"
           />
         </motion.div>
@@ -56,7 +53,7 @@ export default function ScreenSuccess({
         >
           <img
             src={photo2Url}
-            alt="Фото 2"
+            alt={t('create.photo2')}
             className="w-full h-full object-cover"
           />
         </motion.div>

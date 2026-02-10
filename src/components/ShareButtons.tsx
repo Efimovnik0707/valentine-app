@@ -1,13 +1,9 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 
 const TELEGRAM_SHARE_BASE = 'https://t.me/share/url?'
 const WHATSAPP_SHARE_BASE = 'https://wa.me/?text='
-
-const SHARE_TEXTS = {
-  creator: 'Вот моя валентинка для тебя 💕',
-  recipient: 'Смотри, какую валентинку мне прислали 💕',
-} as const
 
 interface ShareButtonsProps {
   shareUrl: string
@@ -15,9 +11,10 @@ interface ShareButtonsProps {
 }
 
 export default function ShareButtons({ shareUrl, variant = 'creator' }: ShareButtonsProps) {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
-  const shareText = SHARE_TEXTS[variant]
+  const shareText = variant === 'creator' ? t('share.creatorText') : t('share.recipientText')
   const fullText = `${shareText} ${shareUrl}`
   const telegramUrl = `${TELEGRAM_SHARE_BASE}url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`
   const whatsappUrl = `${WHATSAPP_SHARE_BASE}${encodeURIComponent(fullText)}`
@@ -33,8 +30,8 @@ export default function ShareButtons({ shareUrl, variant = 'creator' }: ShareBut
   }
 
   const promptText = variant === 'creator'
-    ? 'Поделись ссылкой на свою валентинку:'
-    : 'Поделись своей валентинкой:'
+    ? t('share.creatorPrompt')
+    : t('share.recipientPrompt')
 
   return (
     <div className="space-y-3">
@@ -48,7 +45,7 @@ export default function ShareButtons({ shareUrl, variant = 'creator' }: ShareBut
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             className="shrink-0 p-2 rounded-lg bg-white/30 hover:bg-white/40 transition-colors"
-            title="Скопировать"
+            title={t('common.copy')}
           >
             {copied ? (
               <span className="text-white text-lg">✓</span>
@@ -93,7 +90,7 @@ export default function ShareButtons({ shareUrl, variant = 'creator' }: ShareBut
           whileTap={{ scale: 0.98 }}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-valentine-500 text-white font-medium"
         >
-          Создать свою
+          {t('share.createOwn')}
         </motion.a>
       </div>
     </div>

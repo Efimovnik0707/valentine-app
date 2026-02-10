@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import ValentineFlow from '../components/ValentineFlow'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 import { supabase } from '../lib/supabase'
 import type { ValentineData } from '../types'
 
 export default function Valentine() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const [data, setData] = useState<ValentineData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -12,7 +15,7 @@ export default function Valentine() {
 
   useEffect(() => {
     if (!id) {
-      setError('Неверная ссылка')
+      setError(t('valentine.invalidLink'))
       setLoading(false)
       return
     }
@@ -40,7 +43,7 @@ export default function Valentine() {
         if (fetchError) throw fetchError
 
         if (!row) {
-          setError('Валентинка не найдена')
+          setError(t('valentine.notFound'))
           return
         }
 
@@ -54,7 +57,7 @@ export default function Valentine() {
           photo2Url,
         })
       } catch (err) {
-        setError('Не удалось загрузить валентинку')
+        setError(t('valentine.loadError'))
         console.error(err)
       } finally {
         setLoading(false)
@@ -71,22 +74,24 @@ export default function Valentine() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-valentine-400 via-valentine-500 to-valentine-700 flex items-center justify-center">
-        <div className="text-white text-xl">Загрузка...</div>
+        <div className="text-white text-xl">{t('valentine.loading')}</div>
       </div>
     )
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-valentine-400 via-valentine-500 to-valentine-700 flex flex-col items-center justify-center p-4">
-        <p className="text-white text-xl mb-4">{error || 'Что-то пошло не так'}</p>
-        <Link to="/" className="text-white underline">На главную</Link>
+      <div className="min-h-screen bg-gradient-to-br from-valentine-400 via-valentine-500 to-valentine-700 flex flex-col items-center justify-center p-4 relative">
+        <LanguageSwitcher variant="minimal" className="absolute top-4 right-4 text-white/90" />
+        <p className="text-white text-xl mb-4">{error || t('valentine.somethingWrong')}</p>
+        <Link to="/" className="text-white underline">{t('valentine.backToHome')}</Link>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-valentine-400 via-valentine-500 to-valentine-700 relative overflow-hidden">
+      <LanguageSwitcher variant="minimal" className="absolute top-4 right-4 z-20 text-white/90" />
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 25c-2-4-6-6-10-4s-6 6-4 10c2 4 6 6 10 4s6-6 4-10z\' fill=\'%23ffffff\' fill-opacity=\'0.05\'/%3E%3C/svg%3E')] opacity-50" />
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 py-12">
         <ValentineFlow

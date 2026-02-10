@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 import { nanoid } from 'nanoid'
 import { supabase } from '../lib/supabase'
 import type { ValentineTarget } from '../types'
@@ -10,6 +12,7 @@ const MAX_FILE_SIZE_MB = 4
 const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024
 
 export default function Create() {
+  const { t } = useTranslation()
   const [step, setStep] = useState<Step>(1)
   const [target, setTarget] = useState<ValentineTarget>('for_her')
   const [photo1, setPhoto1] = useState<File | null>(null)
@@ -34,7 +37,7 @@ export default function Create() {
       return
     }
     if (file.size > MAX_FILE_SIZE) {
-      setUploadError(`Файл не должен превышать ${MAX_FILE_SIZE_MB} МБ`)
+      setUploadError(t('create.uploadError', { mb: MAX_FILE_SIZE_MB }))
       setter(null)
       if (input) input.value = ''
       return
@@ -51,7 +54,7 @@ export default function Create() {
       const id = nanoid(10)
 
       if (!supabase) {
-        setError('Supabase не настроен. Добавь VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY в .env')
+        setError(t('create.supabaseError'))
         setLoading(false)
         return
       }
@@ -87,8 +90,8 @@ export default function Create() {
     } catch (err: unknown) {
       const msg = typeof err === 'object' && err !== null && 'message' in err
         ? String((err as { message: string }).message)
-        : 'Проверь настройки Supabase'
-      setError(`Не удалось создать валентинку. ${msg}`)
+        : t('create.checkSupabase')
+      setError(t('create.createError', { msg }))
       console.error(err)
     } finally {
       setLoading(false)
@@ -99,7 +102,7 @@ export default function Create() {
     ? `${window.location.origin}/v/${generatedId}`
     : ''
 
-  const shareText = 'Вот моя валентинка для тебя 💕'
+  const shareText = t('share.creatorText')
   const telegramShareUrl = shareUrl
     ? `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`
     : ''
@@ -118,17 +121,18 @@ export default function Create() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-valentine-50 via-cream-50 to-valentine-100">
-      <header className="p-4 border-b border-valentine-200/50">
+      <header className="p-4 border-b border-valentine-200/50 flex justify-between items-center">
         <Link to="/" className="text-valentine-700 hover:text-valentine-900 font-medium">
-          ← На главную
+          {t('common.backToHome')}
         </Link>
+        <LanguageSwitcher variant="minimal" className="text-valentine-700" />
       </header>
 
       <main className="max-w-xl mx-auto p-6 py-12">
         {step === 1 && (
           <div className="space-y-6">
             <h1 className="font-display text-2xl font-bold text-valentine-900">
-              Для кого валентинка?
+              {t('create.forWhom')}
             </h1>
             <div className="grid grid-cols-2 gap-4">
               <button
@@ -137,7 +141,7 @@ export default function Create() {
                 className="p-6 rounded-2xl border-2 border-valentine-200 bg-white hover:border-valentine-400 hover:bg-valentine-50 transition-colors text-left"
               >
                 <span className="text-3xl block mb-2">👩</span>
-                <span className="font-semibold text-valentine-800">Для девушки</span>
+                <span className="font-semibold text-valentine-800">{t('create.forHer')}</span>
               </button>
               <button
                 type="button"
@@ -145,7 +149,7 @@ export default function Create() {
                 className="p-6 rounded-2xl border-2 border-valentine-200 bg-white hover:border-valentine-400 hover:bg-valentine-50 transition-colors text-left"
               >
                 <span className="text-3xl block mb-2">👨</span>
-                <span className="font-semibold text-valentine-800">Для парня</span>
+                <span className="font-semibold text-valentine-800">{t('create.forHim')}</span>
               </button>
             </div>
           </div>
@@ -154,9 +158,9 @@ export default function Create() {
         {step === 2 && (
           <div className="space-y-6">
             <h1 className="font-display text-2xl font-bold text-valentine-900">
-              Загрузи 2 фото
+              {t('create.uploadPhotos')}
             </h1>
-            <p className="text-sm text-gray-500">Макс. {MAX_FILE_SIZE_MB} МБ на фото</p>
+            <p className="text-sm text-gray-500">{t('create.maxSize', { mb: MAX_FILE_SIZE_MB })}</p>
             {uploadError && (
               <p className="text-red-600 text-sm">{uploadError}</p>
             )}
@@ -172,7 +176,7 @@ export default function Create() {
                   }}
                 />
                 {photo1Preview ? (
-                  <img src={photo1Preview} alt="Фото 1" className="w-full h-full object-cover rounded-2xl" />
+                  <img src={photo1Preview} alt={t('create.photo1')} className="w-full h-full object-cover rounded-2xl" />
                 ) : (
                   <span className="text-valentine-500 text-4xl">📷</span>
                 )}
@@ -188,7 +192,7 @@ export default function Create() {
                   }}
                 />
                 {photo2Preview ? (
-                  <img src={photo2Preview} alt="Фото 2" className="w-full h-full object-cover rounded-2xl" />
+                  <img src={photo2Preview} alt={t('create.photo2')} className="w-full h-full object-cover rounded-2xl" />
                 ) : (
                   <span className="text-valentine-500 text-4xl">📷</span>
                 )}
@@ -200,7 +204,7 @@ export default function Create() {
                 onClick={() => setStep(1)}
                 className="px-4 py-2 text-valentine-600 hover:text-valentine-800"
               >
-                Назад
+                {t('common.back')}
               </button>
               <button
                 type="button"
@@ -208,7 +212,7 @@ export default function Create() {
                 disabled={!photo1 || !photo2}
                 className="flex-1 py-3 rounded-xl bg-valentine-500 text-white font-semibold disabled:opacity-50"
               >
-                Дальше
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -217,14 +221,14 @@ export default function Create() {
         {step === 3 && (
           <div className="space-y-6">
             <h1 className="font-display text-2xl font-bold text-valentine-900">
-              Всё верно?
+              {t('create.allCorrect')}
             </h1>
             <div className="grid grid-cols-2 gap-4">
               {photo1Preview && (
-                <img src={photo1Preview} alt="Фото 1" className="aspect-[3/4] object-cover rounded-2xl border-2 border-valentine-200" />
+                <img src={photo1Preview} alt={t('create.photo1')} className="aspect-[3/4] object-cover rounded-2xl border-2 border-valentine-200" />
               )}
               {photo2Preview && (
-                <img src={photo2Preview} alt="Фото 2" className="aspect-[3/4] object-cover rounded-2xl border-2 border-valentine-200" />
+                <img src={photo2Preview} alt={t('create.photo2')} className="aspect-[3/4] object-cover rounded-2xl border-2 border-valentine-200" />
               )}
             </div>
             {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -234,7 +238,7 @@ export default function Create() {
                 onClick={() => setStep(2)}
                 className="px-4 py-2 text-valentine-600 hover:text-valentine-800"
               >
-                Назад
+                {t('common.back')}
               </button>
               <button
                 type="button"
@@ -242,7 +246,7 @@ export default function Create() {
                 disabled={loading}
                 className="flex-1 py-3 rounded-xl bg-valentine-500 text-white font-semibold disabled:opacity-50"
               >
-                {loading ? 'Создаю...' : 'Создать ссылку'}
+                {loading ? t('create.creating') : t('create.createLink')}
               </button>
             </div>
           </div>
@@ -252,10 +256,10 @@ export default function Create() {
           <div className="space-y-6 text-center">
             <p className="text-4xl">🎉</p>
             <h1 className="font-display text-2xl font-bold text-valentine-900">
-              Готово!
+              {t('create.done')}
             </h1>
             <p className="text-gray-600">
-              Отправь эту ссылку своей второй половинке:
+              {t('create.sendLink')}
             </p>
             <div className="flex items-center gap-2 p-4 rounded-xl bg-white border border-valentine-200">
               <span className="flex-1 break-all text-valentine-700 font-mono text-sm min-w-0">{shareUrl}</span>
@@ -263,7 +267,7 @@ export default function Create() {
                 type="button"
                 onClick={handleCopyLink}
                 className="shrink-0 p-2 rounded-lg bg-valentine-100 hover:bg-valentine-200 text-valentine-700 transition-colors"
-                title="Скопировать"
+                title={t('common.copy')}
               >
                 {copied ? '✓' : (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -301,7 +305,7 @@ export default function Create() {
               }}
               className="block w-full py-2 text-valentine-600 hover:text-valentine-800"
             >
-              Создать ещё одну
+              {t('create.createAnother')}
             </button>
           </div>
         )}

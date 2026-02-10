@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import RunawayButton, { type RunawayButtonHandle } from './RunawayButton'
 import type { ValentineTarget } from '../types'
@@ -9,19 +10,10 @@ interface ScreenIntroProps {
   onNo: () => void
 }
 
-const LABELS = {
-  for_her: {
-    title: 'Для самой лучшей',
-    question: 'Будешь моей Валентинкой?',
-  },
-  for_him: {
-    title: 'Для самого лучшего',
-    question: 'Будешь моим Валентинкой?',
-  },
-}
-
 export default function ScreenIntro({ target, onYes, onNo }: ScreenIntroProps) {
-  const { title, question } = LABELS[target]
+  const { t } = useTranslation()
+  const title = target === 'for_her' ? t('intro.forHerTitle') : t('intro.forHimTitle')
+  const question = target === 'for_her' ? t('intro.forHerQuestion') : t('intro.forHimQuestion')
   const runawayRef = useRef<RunawayButtonHandle>(null)
 
   return (
@@ -50,10 +42,10 @@ export default function ScreenIntro({ target, onYes, onNo }: ScreenIntroProps) {
             whileTap={{ scale: 0.98 }}
             className="px-8 py-4 rounded-xl bg-gradient-to-r from-valentine-500 to-valentine-600 text-white font-semibold text-lg shadow-lg shadow-valentine-500/30 hover:shadow-valentine-500/40 transition-shadow shrink-0"
           >
-            Да! ❤️
+            {t('intro.yes')}
           </motion.button>
           <RunawayButton ref={runawayRef} onClick={onNo}>
-            Нет
+            {t('intro.no')}
           </RunawayButton>
         </div>
       </div>

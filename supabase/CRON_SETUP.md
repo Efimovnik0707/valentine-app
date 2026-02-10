@@ -7,10 +7,23 @@ Edge Function `cleanup-expired` уже задеплоена. Чтобы cron в�
 2. Выполни SQL (если ещё не применял миграции 002 и 003):
 
 ```sql
--- 1. Колонка expires_at (если её ещё нет)
-alter table public.valentines
-  add column if not exists expires_at timestamptz
-  generated always as (created_at + interval '10 days') stored;
+-- 1. Колонка expires_at + триггер (PostgreSQL не позволяет generated column со ссылкой на другую колонку)
+alter table public.valentines add column if not exists expires_at timestamptz;
+
+create or replace function public.set_expires_at()
+returns trigger as $$
+begin
+  new.expires_at := new.created_at + interval '10 days';
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists set_expires_at_trigger on public.valentines;
+create trigger set_expires_at_trigger
+  before insert on public.valentines
+  for each row execute function public.set_expires_at();
+
+update public.valentines set expires_at = created_at + interval '10 days' where expires_at is null;
 create index if not exists idx_valentines_expires_at on public.valentines (expires_at);
 
 -- 2. Расширения

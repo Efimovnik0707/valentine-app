@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface ScreenNoReactionProps {
   onNext: () => void
 }
 
 export default function ScreenNoReaction({ onNext }: ScreenNoReactionProps) {
+  const { t } = useTranslation()
   useEffect(() => {
     const timer = setTimeout(onNext, 1800)
     return () => clearTimeout(timer)
@@ -21,7 +23,7 @@ export default function ScreenNoReaction({ onNext }: ScreenNoReactionProps) {
     >
       <p className="text-6xl mb-4">😿</p>
       <p className="font-display text-2xl font-semibold text-white drop-shadow-lg mb-2">
-        Ты серьёзно???
+        {t('noReaction.seriously')}
       </p>
       <p className="text-4xl">💔</p>
     </motion.div>

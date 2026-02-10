@@ -1,10 +1,16 @@
+import { useTranslation } from 'react-i18next'
+
 interface YoutubeShortEmbedProps {
-  /** YouTube Short video ID (из URL youtube.com/shorts/VIDEO_ID). Или задай VITE_YOUTUBE_SHORT_ID в .env */
+  /** YouTube Short video ID (из URL youtube.com/shorts/VIDEO_ID). Или задай VITE_YOUTUBE_SHORT_ID_RU/EN в .env */
   videoId?: string
 }
 
 export default function YoutubeShortEmbed({ videoId }: YoutubeShortEmbedProps) {
-  const id = videoId || import.meta.env.VITE_YOUTUBE_SHORT_ID
+  const { i18n } = useTranslation()
+  const envId = i18n.language === 'ru'
+    ? import.meta.env.VITE_YOUTUBE_SHORT_ID_RU
+    : import.meta.env.VITE_YOUTUBE_SHORT_ID_EN
+  const id = videoId || envId
 
   if (!id) {
     return (
@@ -12,7 +18,7 @@ export default function YoutubeShortEmbed({ videoId }: YoutubeShortEmbedProps) {
         <p className="text-valentine-700 font-medium">Скоро здесь будет твоё видео</p>
         <p className="text-sm text-gray-500 mt-2">
           Загрузи Reels как YouTube Short и добавь в .env:<br />
-          <code className="text-xs bg-white px-2 py-1 rounded mt-1 inline-block">VITE_YOUTUBE_SHORT_ID=твой_id</code>
+          <code className="text-xs bg-white px-2 py-1 rounded mt-1 inline-block">VITE_YOUTUBE_SHORT_ID_RU=... VITE_YOUTUBE_SHORT_ID_EN=...</code>
         </p>
       </div>
     )

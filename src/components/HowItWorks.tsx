@@ -1,26 +1,17 @@
+import { useTranslation } from 'react-i18next'
+
 export default function HowItWorks() {
+  const { t } = useTranslation()
   const steps = [
-    {
-      num: 1,
-      title: 'Выбери и загрузи',
-      desc: 'Выбери «для парня» или «для девушки», загрузи 2 фото — они появятся в конце.',
-    },
-    {
-      num: 2,
-      title: 'Получи ссылку',
-      desc: 'Скопируй ссылку и отправь своей второй половинке в Telegram, WhatsApp или мессенджере.',
-    },
-    {
-      num: 3,
-      title: 'Партнёр открывает',
-      desc: 'Он увидит вопрос «Будешь моей валентинкой?», кнопку «Нет» (которая убегает!), и при «Да» — твои фото и поздравление.',
-    },
+    { num: 1, title: t('howItWorks.step1Title'), desc: t('howItWorks.step1Desc') },
+    { num: 2, title: t('howItWorks.step2Title'), desc: t('howItWorks.step2Desc') },
+    { num: 3, title: t('howItWorks.step3Title'), desc: t('howItWorks.step3Desc') },
   ]
 
   return (
     <div>
       <h2 className="font-display text-2xl font-bold text-valentine-900 text-center mb-10">
-        Как это работает
+        {t('landing.howItWorks')}
       </h2>
       <div className="space-y-8">
         {steps.map((step) => (

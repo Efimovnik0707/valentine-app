@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import ValentineFlow from '../components/ValentineFlow'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 
 // Свои фото: VITE_DEMO_PHOTO_1 и VITE_DEMO_PHOTO_2 в .env (или в Vercel)
 // Пример: положи фото в public/ и укажи VITE_DEMO_PHOTO_1=/demo-photo1.jpg
@@ -7,6 +9,7 @@ const DEMO_PHOTO_1 = import.meta.env.VITE_DEMO_PHOTO_1 || 'https://images.unspla
 const DEMO_PHOTO_2 = import.meta.env.VITE_DEMO_PHOTO_2 || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=533&fit=crop'
 
 export default function Demo() {
+  const { t } = useTranslation()
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/demo` : ''
 
   return (
@@ -17,8 +20,9 @@ export default function Demo() {
           to="/"
           className="absolute top-4 left-4 text-white/90 hover:text-white font-medium"
         >
-          ← Назад
+          ← {t('common.back')}
         </Link>
+        <LanguageSwitcher variant="minimal" className="absolute top-4 right-4 z-20 text-white/90" />
         <ValentineFlow
           target="for_her"
           photo1Url={DEMO_PHOTO_1}
