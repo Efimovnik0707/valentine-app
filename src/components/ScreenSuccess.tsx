@@ -68,7 +68,7 @@ export default function ScreenSuccess({
         transition={{ delay: 0.5 }}
         className="space-y-6"
       >
-        <ShareButtons shareUrl={shareUrl} />
+        <ShareButtons shareUrl={shareUrl} variant="recipient" />
         <YesWorkflowBlock />
       </motion.div>
     </motion.div>

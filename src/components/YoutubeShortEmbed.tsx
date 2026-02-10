@@ -19,7 +19,7 @@ export default function YoutubeShortEmbed({ videoId }: YoutubeShortEmbedProps) {
   }
 
   return (
-    <div className="max-w-sm mx-auto">
+    <div className="w-full max-w-sm mx-auto flex justify-center">
       <div className="aspect-[9/16] max-h-[500px] rounded-2xl overflow-hidden shadow-xl border-2 border-valentine-200 bg-gray-900">
         <iframe
           src={`https://www.youtube.com/embed/${id}`}

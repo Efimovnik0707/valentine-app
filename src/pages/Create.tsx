@@ -6,7 +6,7 @@ import type { ValentineTarget } from '../types'
 
 type Step = 1 | 2 | 3 | 4
 
-const MAX_FILE_SIZE_MB = 2
+const MAX_FILE_SIZE_MB = 4
 const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024
 
 export default function Create() {
@@ -99,8 +99,12 @@ export default function Create() {
     ? `${window.location.origin}/v/${generatedId}`
     : ''
 
+  const shareText = 'Вот моя валентинка для тебя 💕'
   const telegramShareUrl = shareUrl
-    ? `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('Вот моя валентинка для тебя 💕')}`
+    ? `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`
+    : ''
+  const whatsappShareUrl = shareUrl
+    ? `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`
     : ''
 
   const handleCopyLink = async () => {
@@ -268,14 +272,24 @@ export default function Create() {
                 )}
               </button>
             </div>
-            <a
-              href={telegramShareUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0088cc] text-white font-semibold"
-            >
-              Поделиться в Telegram
-            </a>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <a
+                href={telegramShareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0088cc] text-white font-semibold"
+              >
+                Telegram
+              </a>
+              <a
+                href={whatsappShareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#25D366] text-white font-semibold"
+              >
+                WhatsApp
+              </a>
+            </div>
             <button
               type="button"
               onClick={() => {

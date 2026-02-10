@@ -34,6 +34,7 @@ export default function Valentine() {
           .from('valentines')
           .select('id, target, photo1_path, photo2_path')
           .eq('id', id)
+          .gt('expires_at', new Date().toISOString())
           .single()
 
         if (fetchError) throw fetchError

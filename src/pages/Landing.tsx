@@ -44,7 +44,7 @@ export default function Landing() {
           <HowItWorks />
         </section>
 
-        <section className="py-12">
+        <section className="py-12 flex flex-col items-center">
           <h2 className="font-display text-2xl font-bold text-valentine-900 text-center mb-6">
             Посмотри, как это выглядит в деле
           </h2>
@@ -52,15 +52,18 @@ export default function Landing() {
         </section>
       </main>
 
-      <footer className="py-6 text-center border-t border-valentine-200/50">
+      <footer className="py-6 text-center border-t border-valentine-200/50 space-y-1">
         <a
           href="https://yesworkflow.com/book-call"
           target="_blank"
           rel="noopener noreferrer"
           className="text-valentine-600 hover:text-valentine-800 text-sm"
         >
-          Сделано в YesWorkflow
+          Сделано в AI студии — <b>YesWorkflow</b>
         </a>
+        <p className="text-gray-500 text-xs">
+          Фото и ссылки хранятся не более 10 дней
+        </p>
       </footer>
     </div>
   )
